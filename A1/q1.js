@@ -25,5 +25,32 @@ const BFS = (puz) => {
   }
 }
 
+const DFS = (puz) => {
+  let res;
+  const _DFSHelper = (cur, visited) => {
+    visited[cur.state.join('')] = true;
+
+    if (JSON.stringify(cur.state) === JSON.stringify(cur.goal)) {
+      res = cur;
+    }
+
+    const emptyIndex = cur.getEmpty();
+    const adjacentIndexes = cur.getAdjacent(emptyIndex);
+
+    adjacentIndexes.forEach((adj) => {
+      const clone = cur.clone();
+      clone.swap(emptyIndex, adj);
+      if (!visited[clone.state.join('')]) {
+        _DFSHelper(clone, visited);
+      } 
+    });
+  }
+    
+  _DFSHelper(puz, {});
+  res.history.forEach(r => {
+    console.log(r);
+  });
+}
+
 const b = new a([1,4,2,5,3,EMPTY], [EMPTY,1,2,5,4,3]);
-BFS(b);
+DFS(b);
