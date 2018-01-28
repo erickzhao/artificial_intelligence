@@ -1,8 +1,8 @@
 class SixPuzzle {
 
-
   constructor(initial, goal) {
     this.state = initial;
+    this.history = [initial];
     this.goal = goal;
     this.WIDTH = 3;
     this.HEIGHT = 2;
@@ -39,10 +39,18 @@ class SixPuzzle {
     const tmp = this.state[a];
     this.state[a] = this.state[b];
     this.state[b] = tmp;
+    this.history.push(this.state);
   }
 
   print() {
     console.log(this.state);
+  }
+
+  clone() {
+    const clone = new SixPuzzle(this.state.slice(), this.goal.slice());
+    clone.history = this.history.slice();
+
+    return clone;
   }
 
 }
