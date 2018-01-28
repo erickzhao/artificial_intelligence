@@ -28,6 +28,9 @@ class SixPuzzle {
       }
     }
 
+    // sort by value to return array in order of smallest puzzle number
+    adjIndexes.sort((a,b) => this.state[a] > this.state[b]);
+
     return adjIndexes;
   }
 
