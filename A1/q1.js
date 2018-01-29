@@ -72,27 +72,23 @@ const IDFS = (puz) => {
 }
 
 const puzzle = new a([1,4,2,5,3,EMPTY], [EMPTY,1,2,5,4,3]);
+let result;
 
 switch(process.argv[2]) {
   case "--bfs":
-    const result = BFS(puzzle);
-    result.forEach(line => {
-      console.log(line);
-    });
+    result = BFS(puzzle);
+    break;
   case "--dfs":
-    const result = DFS(puzzle);
-    result.forEach(line => {
-      console.log(line);
-    });
+    result = DFS(puzzle);
     break;
   case  "--ucs":
-    const result = UCS(puzzle);
-    result.forEach(line => {
-      console.log(line);
-    });
+    result = UCS(puzzle);
+    break;
   case "--idfs":
-    const result = IDFS(puzzle);
-    result.forEach(line => {
-      console.log(line);
-    });
+    result = IDFS(puzzle);
+    break;
 }
+
+result.forEach(step => {
+  console.log(step);
+})
