@@ -25,6 +25,10 @@ const BFS = (puz) => {
   }
 }
 
+// Uniform Cost Search is the same as Breadth-First Search in
+// our case because all steps have unit cost.
+const UCS = BFS;
+
 const DFS = (puz, maxDepth) => {
   const NO_MAX_DEPTH = -1;
   let res;
