@@ -25,9 +25,13 @@ const BFS = (puz) => {
   }
 }
 
-const DFS = (puz) => {
+const DFS = (puz, maxDepth) => {
+  const NO_MAX_DEPTH = -1;
   let res;
-  const _DFSHelper = (cur, visited) => {
+
+  maxDepth = maxDepth || NO_MAX_DEPTH;
+
+  const _DFSHelper = (cur, visited, depth) => {
     visited[cur.state.join('')] = true;
 
     if (JSON.stringify(cur.state) === JSON.stringify(cur.goal)) {
@@ -36,21 +40,33 @@ const DFS = (puz) => {
 
     const emptyIndex = cur.getEmpty();
     const adjacentIndexes = cur.getAdjacent(emptyIndex);
+    depth++;
 
     adjacentIndexes.forEach((adj) => {
       const clone = cur.clone();
       clone.swap(emptyIndex, adj);
-      if (!visited[clone.state.join('')]) {
-        _DFSHelper(clone, visited);
+      if (!visited[clone.state.join('')] && (maxDepth === NO_MAX_DEPTH || depth <= maxDepth)) {
+        _DFSHelper(clone, visited, depth);
       } 
     });
   }
     
-  _DFSHelper(puz, {});
-  res.history.forEach(r => {
-    console.log(r);
-  });
+  _DFSHelper(puz, {}, 0);
+
+  return res && res.history || [];
 }
 
+const IDFS = (puz) => {
+  let res = [];
+  let depth = 1;
+  while(!res.length) {
+    res = DFS(puz, depth);
+    depth++;
+  }
+
+  return res;
+}
+
+
 const b = new a([1,4,2,5,3,EMPTY], [EMPTY,1,2,5,4,3]);
-DFS(b);
+console.log(IDFS(b));
