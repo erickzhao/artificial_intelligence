@@ -10,7 +10,7 @@ const BFS = (puz) => {
     const cur = queue.shift();
 
     if (JSON.stringify(cur.goal) === JSON.stringify(cur.state)) {
-      console.log(cur.history);
+      return cur.history;
       break;
     }
 
@@ -71,6 +71,28 @@ const IDFS = (puz) => {
   return res;
 }
 
+const puzzle = new a([1,4,2,5,3,EMPTY], [EMPTY,1,2,5,4,3]);
 
-const b = new a([1,4,2,5,3,EMPTY], [EMPTY,1,2,5,4,3]);
-console.log(IDFS(b));
+switch(process.argv[2]) {
+  case "--bfs":
+    const result = BFS(puzzle);
+    result.forEach(line => {
+      console.log(line);
+    });
+  case "--dfs":
+    const result = DFS(puzzle);
+    result.forEach(line => {
+      console.log(line);
+    });
+    break;
+  case  "--ucs":
+    const result = UCS(puzzle);
+    result.forEach(line => {
+      console.log(line);
+    });
+  case "--idfs":
+    const result = IDFS(puzzle);
+    result.forEach(line => {
+      console.log(line);
+    });
+}
