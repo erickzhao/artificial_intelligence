@@ -1,0 +1,1 @@
+const fn = (x) => (Math.sin((x^2) / 2) / Math.log2(x + 4));
