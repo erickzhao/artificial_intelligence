@@ -47,7 +47,7 @@ const simulatedAnnealing = (startPos, stepSize, minBound, maxBound, fn, startTem
 
     if (val < nextMove.val) {
       pos = nextMove.pos;
-    } else if (rollToKeep(val, nextMove.val) < Math.random()) {
+    } else if (rollToKeep(val, nextMove.val) > Math.random()) {
       pos = nextMove.pos;
     }
 
