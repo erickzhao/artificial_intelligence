@@ -18,7 +18,7 @@ const hillClimb = (startPos, stepSize, minBound, maxBound, fn) => {
       numSteps++;
     }
   }
-  console.log(`${startPos},${stepSize},${pos},${fn(pos)}${numSteps}`);
+  console.log(`${startPos} & ${stepSize} & ${pos.toFixed(2)} & ${fn(pos)} & ${numSteps} \-\ \hline`);
 }
 
 const simulatedAnnealing = (startPos, stepSize, minBound, maxBound, fn, startTemp, coolingRate) => {
@@ -27,7 +27,7 @@ const simulatedAnnealing = (startPos, stepSize, minBound, maxBound, fn, startTem
   let isMax = false;
   let numSteps = 0;
 
-  const getProbability = (curr, next) => {
+  const rollToKeep = (curr, next) => {
     const a = Math.pow(Math.E, (next - curr) / temp);
     return a;
   };
@@ -39,18 +39,19 @@ const simulatedAnnealing = (startPos, stepSize, minBound, maxBound, fn, startTem
     const neighborValues = neighbors
       .map(n => fn(n));
 
-    const index = (neighbors.length > 1) ? Math.round(Math.random()) : 0;
+    const index = (neighbors.length > 1) ? (0 + (Math.random() < 0.5)) : 0;
     const nextMove = {
       pos: neighbors[index],
       val: neighborValues[index],
     }
 
-    if (val < nextMove.val || getProbability(val, nextMove.val) < Math.random()) {
+    if (val < nextMove.val) {
+      pos = nextMove.pos;
+    } else if (rollToKeep(val, nextMove.val) < Math.random()) {
       pos = nextMove.pos;
     }
 
     numSteps++;
-
     temp *= (1 - coolingRate);
   }
   console.log(`${startPos},${stepSize},${startTemp},${coolingRate},${pos},${fn(pos)},${numSteps}`);
@@ -62,24 +63,37 @@ const startingPoints = Array(11).fill().map((v,i) => i);
 const MIN_BOUND = 0;
 const MAX_BOUND = 10; 
 
-console.log('"Start Position","Step Size","Final Position","Value","Steps to Convergence"');
-stepSizes.forEach(size => {
-  startingPoints.forEach(pos => {
-    hillClimb(pos, size, MIN_BOUND, MAX_BOUND, fn);
+const climb = () => {
+  console.log('"Start Position","Step Size","Final Position","Value","Steps to Convergence"');
+  stepSizes.forEach(size => {
+    startingPoints.forEach(pos => {
+      hillClimb(pos, size, MIN_BOUND, MAX_BOUND, fn);
+    });
   });
-});
+}
 
-const stepSizes2 = [0.01, 0.02, 0.1];
-const temperatures = [10, 100, 1000, 10000];
-const coolingRates = [10, 1, 0.1, 0.01, 0.001, 0.0001, 0.00001];
+const stepSizes2 = [0.01,0.05,0.1];
+const temperatures = [100,1000,10000];
+const coolingRates = [0.01,0.001,0.0001];
 
-// console.log('"Start Position","Step Size","Temperature","Cooling Rate","Final Position","Value","Steps to Convergence"');
-// startingPoints.forEach(pos => {
-//   stepSizes2.forEach(size => {
-//     temperatures.forEach(temp => {
-//       coolingRates.forEach(rate => {
-//         simulatedAnnealing(pos, size, MIN_BOUND, MAX_BOUND, fn, temp, rate);
-//       });
-//     });
-//   });
-// });
+const anneal = () => { 
+  console.log('"Start Position","Step Size","Temperature","Cooling Rate","Final Position","Value","Steps to Convergence"');
+  startingPoints.forEach(pos => {
+    stepSizes2.forEach(size => {
+      temperatures.forEach(temp => {
+        coolingRates.forEach(rate => {
+          simulatedAnnealing(pos, size, MIN_BOUND, MAX_BOUND, fn, temp, rate);
+        });
+      });
+    });
+  });
+}
+
+switch(process.argv[2]) {
+  case "--h":
+    climb();
+    break;
+  case "--a":
+    anneal();
+    break;
+}
