@@ -27,34 +27,32 @@ const simulatedAnnealing = (startPos, stepSize, minBound, maxBound, fn, startTem
   let isMax = false;
   let numSteps = 0;
 
-  const rollToKeep = (curr, next) => {
-    const a = Math.pow(Math.E, (next - curr) / temp);
+  const getKeepProbability = (curr, next) => {
+    const a = Math.pow(Math.E, -(curr - next) / temp);
     return a;
   };
 
-  while (temp > 1) {
+  while (temp > 0) {
     const val = fn(pos);
     const neighbors = [pos + stepSize, pos - stepSize]
       .filter(n => n >= minBound && n <= maxBound);
-    const neighborValues = neighbors
-      .map(n => fn(n));
 
-    const index = (neighbors.length > 1) ? (0 + (Math.random() < 0.5)) : 0;
+    const index = (neighbors.length > 1) ? (Math.round(Math.random())) : 0;
     const nextMove = {
       pos: neighbors[index],
-      val: neighborValues[index],
+      val: fn(neighbors[index]),
     }
 
     if (val < nextMove.val) {
       pos = nextMove.pos;
-    } else if (rollToKeep(val, nextMove.val) > Math.random()) {
+    } else if (getKeepProbability(val, nextMove.val) > Math.random()) {
       pos = nextMove.pos;
     }
 
     numSteps++;
-    temp *= (1 - coolingRate);
+    temp -= coolingRate;
   }
-  console.log(`${startPos},${stepSize},${startTemp},${coolingRate},${pos},${fn(pos)},${numSteps}`);
+  console.log(`${startPos} & ${stepSize} & ${startTemp} & ${coolingRate} & ${pos.toFixed(2)} & ${(fn(pos)).toFixed(3)} & ${numSteps} - hline`);
 }
 
 const stepSizes = Array(10).fill().map((v,i) => (i+1)*0.01);
@@ -72,16 +70,16 @@ const climb = () => {
   });
 }
 
-const stepSizes2 = [0.01,0.05,0.1];
-const temperatures = [100,1000,10000];
-const coolingRates = [0.01,0.001,0.0001];
+const stepSizes2 = [0.04, 0.07, 0.1];
+const temperatures = [1, 0.7, 0.5, 0.3, 0.1];
+const coolingRates = [0.0001, 0.00005, 0.00001];
 
 const anneal = () => { 
   console.log('"Start Position","Step Size","Temperature","Cooling Rate","Final Position","Value","Steps to Convergence"');
-  startingPoints.forEach(pos => {
-    stepSizes2.forEach(size => {
+  stepSizes2.forEach(size => {
+    coolingRates.forEach(rate => {
       temperatures.forEach(temp => {
-        coolingRates.forEach(rate => {
+        startingPoints.forEach(pos => {
           simulatedAnnealing(pos, size, MIN_BOUND, MAX_BOUND, fn, temp, rate);
         });
       });
@@ -94,6 +92,9 @@ switch(process.argv[2]) {
     climb();
     break;
   case "--a":
+    anneal();
+    break;
+  default:
     anneal();
     break;
 }
