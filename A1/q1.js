@@ -60,7 +60,7 @@ const DFS = (puz, maxDepth) => {
   return res && res.history || [];
 }
 
-const IDFS = (puz) => {
+const IDS = (puz) => {
   let res = [];
   let depth = 1;
   while(!res.length) {
@@ -84,8 +84,8 @@ switch(process.argv[2]) {
   case  "--ucs":
     result = UCS(puzzle);
     break;
-  case "--idfs":
-    result = IDFS(puzzle);
+  case "--ids":
+    result = IDS(puzzle);
     break;
 }
 
